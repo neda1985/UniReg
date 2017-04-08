@@ -61,51 +61,40 @@ class AdminController extends Controller
 
     public function admin1()
     {
-        $table = '<div class="well"><table  cellspacing="0" class="table table-bordered"><thead> <tr>
-  <th>نام دوره</th>  <th >کد</th>  <th>شهریه ثابت</th>     <th>شهریه کامل </th>
-  <th>ظرفیت رسمی
-
-</th>
-  <th>ظرفیت اعلام شده
-
-</th>
-  <th>جزئیات</th>
-  </tr>
-  </thead>';
-        $result = App\Course::select('*')->get();
-        foreach ($result as $t) {
-            $table .= "<tr ><td>$t->title </td><td> $t->code </td><td> $t->staticFee</td>
-<td> $t->totallFee </td>
-<td> $t->officialCapacity </td>
-<td> $t->decleredCapacity </td>
-<td><a href='#'><span class='glyphicon glyphicon-trash' onclick='trashCourse($t->id)'></span></a></td></tr>";
-        }
-        echo $table . '</table></div><div class="col-md-6 col-md-offset-3 well"><div class="form-group">
-        <input type="text" class="form-control" id="courseTitle" placeholder="نام دوره"/>
-        </div>
-        <div class="form-group">
-        <input type="text" class="form-control" id="courseCode" placeholder="کد"/>
-        </div>
-        <div class="form-group">
-        <input type="text" class="form-control" id="staticFee" placeholder="شهریه ثابت"/>
-        </div>
-        <div class="form-group">
-        <input type="text" class="form-control" id="dynamicFee" placeholder="شهریه کامل"/>
-        </div>
-         <div class="form-group">
-        <input type="text" class="form-control" id="officialCapacity" placeholder="ظرفیت رسمی
-
- "/>
-        </div>
-         <div class="form-group">
-        <input type="text" class="form-control" id="decleredCapacity" placeholder="ظرفیت اعلام شده
-
- "/>
-        </div>
-        <div class="form-group">
-         <input type="submit" class="btn btn-primary" value="افزودن دوره" onclick="adminAddCourse()"/>
-        </div>
-        </div>';
+        return response(App\Course::select('*')->get());
+//        foreach ($result as $t) {
+//            $table .= "<tr ><td>$t->title </td><td> $t->code </td><td> $t->staticFee</td>
+//<td> $t->totallFee </td>
+//<td> $t->officialCapacity </td>
+//<td> $t->decleredCapacity </td>
+//<td><a href='#'><span class='glyphicon glyphicon-trash' onclick='trashCourse($t->id)'></span></a></td></tr>";
+//        }
+//        echo $table . '</table></div><div class="col-md-6 col-md-offset-3 well"><div class="form-group">
+//        <input type="text" class="form-control" id="courseTitle" placeholder="نام دوره"/>
+//        </div>
+//        <div class="form-group">
+//        <input type="text" class="form-control" id="courseCode" placeholder="کد"/>
+//        </div>
+//        <div class="form-group">
+//        <input type="text" class="form-control" id="staticFee" placeholder="شهریه ثابت"/>
+//        </div>
+//        <div class="form-group">
+//        <input type="text" class="form-control" id="dynamicFee" placeholder="شهریه کامل"/>
+//        </div>
+//         <div class="form-group">
+//        <input type="text" class="form-control" id="officialCapacity" placeholder="ظرفیت رسمی
+//
+// "/>
+//        </div>
+//         <div class="form-group">
+//        <input type="text" class="form-control" id="decleredCapacity" placeholder="ظرفیت اعلام شده
+//
+// "/>
+//        </div>
+//        <div class="form-group">
+//         <input type="submit" class="btn btn-primary" value="افزودن دوره" onclick="adminAddCourse()"/>
+//        </div>
+//        </div>';
     }
 
     public function admin2()
