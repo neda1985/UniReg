@@ -1,4 +1,5 @@
 <link href="resources/assets/css/bootstrap.css" rel="stylesheet">
+<link href="resources/assets/css/bootstrap-rtl.css" rel="stylesheet">
 <link rel="stylesheet" href="resources/assets/css/xenon-core.css">
 <link href="resources/assets/css/custom.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="resources/assets/css/fonts/linecons/css/linecons.css">
@@ -8,6 +9,7 @@
 <link href="resources/assets/css/xenon-components.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="resources/assets/css/toastr.min.css">
 <link rel="stylesheet" href="resources/assets/css/dropzone.css">
+<link rel="stylesheet" href="resources/assets/js/datatables/css/jquery.dataTables.css">
 <link rel="stylesheet" href="resources/assets/css/byekan.css">
 
 <script src="resources/assets/js/jquery-1.11.1.min.js"></script>

@@ -12,6 +12,7 @@ use View;
 class AdminController extends Controller
 {
 
+
     public function index(Request $request)
     {
         $tab1 = '';
@@ -20,6 +21,8 @@ class AdminController extends Controller
         $tab4 = '';
         $tab5 = '';
         $tab6 = '';
+        $tab7 = '';
+        $tab8 = '';
 //        if ($request->user()->id == 1 || $request->user()->id == 2) {
 //            $tab1 = 'style=display:none;';
 //            $tab2 = 'style=display:none;';
@@ -38,7 +41,9 @@ class AdminController extends Controller
                 'tab3' => $tab3,
                 'tab4' => $tab4,
                 'tab5' => $tab5,
-                'tab6' => $tab6
+                'tab6' => $tab6,
+                'tab7' => $tab7,
+                'tab8' => $tab8
             ]);
     }
 
@@ -62,39 +67,6 @@ class AdminController extends Controller
     public function admin1()
     {
         return response(App\Course::select('*')->get());
-//        foreach ($result as $t) {
-//            $table .= "<tr ><td>$t->title </td><td> $t->code </td><td> $t->staticFee</td>
-//<td> $t->totallFee </td>
-//<td> $t->officialCapacity </td>
-//<td> $t->decleredCapacity </td>
-//<td><a href='#'><span class='glyphicon glyphicon-trash' onclick='trashCourse($t->id)'></span></a></td></tr>";
-//        }
-//        echo $table . '</table></div><div class="col-md-6 col-md-offset-3 well"><div class="form-group">
-//        <input type="text" class="form-control" id="courseTitle" placeholder="نام دوره"/>
-//        </div>
-//        <div class="form-group">
-//        <input type="text" class="form-control" id="courseCode" placeholder="کد"/>
-//        </div>
-//        <div class="form-group">
-//        <input type="text" class="form-control" id="staticFee" placeholder="شهریه ثابت"/>
-//        </div>
-//        <div class="form-group">
-//        <input type="text" class="form-control" id="dynamicFee" placeholder="شهریه کامل"/>
-//        </div>
-//         <div class="form-group">
-//        <input type="text" class="form-control" id="officialCapacity" placeholder="ظرفیت رسمی
-//
-// "/>
-//        </div>
-//         <div class="form-group">
-//        <input type="text" class="form-control" id="decleredCapacity" placeholder="ظرفیت اعلام شده
-//
-// "/>
-//        </div>
-//        <div class="form-group">
-//         <input type="submit" class="btn btn-primary" value="افزودن دوره" onclick="adminAddCourse()"/>
-//        </div>
-//        </div>';
     }
 
     public function admin2()
@@ -156,33 +128,36 @@ class AdminController extends Controller
 
     }
 
-    public function admin7()
+    public function admin7(Request $request)
     {
-        $table = '<div class="well"><table  cellspacing="0" class="table table-bordered"><thead> <tr>
-  <th>نام </th>  <th >نام خوانوادگی</th>  <th>رشته </th>
-<th>کد رهگیری</th>
-<th>نحوه پرداخت</th>
-     <th> جزئیات </th>
-
-
-  </tr>
-  </thead>';
-        $result = App\Student_info::select('*')->where('registrationSatus', 2)->get();
-        foreach ($result as $fields) {
-            if ($fields->peymentType == 1)
-                $type = 'نقدی';
-            else
-                $type = 'اقساط';
-
-            $st = App\Student::select('*')->where('id', $fields->student_id)->first();
-            $course = App\Course::select('*')->where('id', $fields->course_id)->first();
-            $table .= "<tr ><td>$st->name $fields->id </td><td>  $st->fullname </td><td> $course->title</td>
-<td>$fields->approvalCode</td>
-<td>$type</td>
-
-<td><a href='#'><span class='glyphicon glyphicon-user' onclick='showStDetails($fields->id)'></span></a></td></tr>";
+        $pageNumber = $request->input('data');
+        $result = App\Student_info::select('*')->where('registrationSatus', 2)->skip(($pageNumber - 1) * 20)->take(20)->get();
+        $r = [];
+        $r['data'] = [];
+        if ($result) {
+            foreach ($result as $fields) {
+                if ($fields->peymentType == 1)
+                    $type = 'نقدی';
+                else
+                    $type = 'اقساط';
+                $st = App\Student::select('*')->where('id', $fields->student_id)->first();
+                $course = App\Course::select('*')->where('id', $fields->course_id)->first();
+                array_push($r['data'], ['type'         => $type,
+                                        'name'         => $fields->name . '' . $fields->id,
+                                        'lastName'     => $st->fullname,
+                                        'courseTitle'  => $course->title,
+                                        'approvalCode' => $fields->approvalCode,
+                                        'fieldsId'     => $fields->id,
+                ]);
+            }
         }
-        echo $table;
+        return response([
+            'result'          => 'success',
+            'draw'            => $pageNumber,
+            'recordsTotal'    => count($result),
+            'recordsFiltered' => count($result),
+            'data'            => $r['data'],
+        ]);
     }
 
     function stDetails(Request $request)
@@ -225,96 +200,85 @@ class AdminController extends Controller
 
     }
 
-    public function admin4()
+    public function admin4(Request $request)
     {
-        $table = '<div class="well"><h4>گزارش گیری وضعیت مالی ثبت نام                 </h4>
-<table  cellspacing="0" class="table table-bordered"><thead> <tr>
-  <th>نام دوره</th>
-        <th>شهریه ثابت</th>
-        <th>شهریه کامل
- </th>
- <th>تعداد افراد با شهریه کامل
-</th>
-<th>مجموع دریافتی با شهریه کامل
-</th>
-<th>تعداد افراد با شهریه اقساطی
-</th>
-<th>شهریه ثابت دریافت شده برای اقساطی ها
-<th>
-شهریه کل دریافت شده از پذیرفته شدگان *
-
-</th>
-<th>تعداد کل ثبت نام کنندگان</th>
-  </tr>
-  </thead>';
-        $result = App\Course::select('*')->get();
+        $pageNumber = $request->input('data');
+        $result = App\Course::select('*')->skip(($pageNumber - 1) * 20)->take(20)->get();
+        $r = [];
+        $r['data'] = [];
         foreach ($result as $t) {
-            $count1 = $this->countTotalFee($t->id, 1);
-            $count2 = $this->countTotalFee($t->id, 2);
-            $tCount1 = $count1 * $t->totallFee;
-            $tCount2 = $count2 * $t->staticFee;
-            $total = $tCount1 + $tCount2;
-            $total2 = $count1 + $count2;
+            array_push($r['data'], [
+                'title'     => $t->title,
+                'staticFee' => $t->staticFee,
+                'totalFee'  => $t->totallFee,
+                'count1'    => $this->countTotalFee($t->id, 1),
+                'tCount1'   => $this->countTotalFee($t->id, 1) * $t->totallFee,
+                'count2'    => $this->countTotalFee($t->id, 2),
+                'tCount2'   => $this->countTotalFee($t->id, 2) * $t->staticFee,
+                'total'     => ($this->countTotalFee($t->id, 1) * $t->totallFee) + ($this->countTotalFee($t->id, 2) * $t->staticFee),
+                'total2'    => ($this->countTotalFee($t->id, 1)) + ($this->countTotalFee($t->id, 2)),
+            ]);
 
-            $table .= "<tr ><td>$t->title </td>
-                            <td> $t->staticFee</td>
-                            <td> $t->totallFee </td>
-                            <td> $count1 </td>
-                            <td>$tCount1 </td>
-                            <td> $count2 </td>
-                            <td> $tCount2 </td>
-                            <td> $total </td>
-							 <td> $total2 </td>
-</tr>";
         }
-        echo $table . '</table></div>';
+        return response([
+            'result'          => 'success',
+            'draw'            => $pageNumber,
+            'recordsTotal'    => count($result),
+            'recordsFiltered' => count($result),
+            'data'            => $r['data'],
+        ]);
     }
 
-    public function admin5()
+    public function admin5(Request $request)
     {
-        $table = '<div class="well">
-<h4>                     گزارش گیری وضعیت ثبت نام                 </h4>
-<div class="well"><table  cellspacing="0" class="table table-bordered"><thead> <tr>
-  <th>نام دوره</th>  <th >کد</th>
-  <th>ظرفیت رسمی
-
-</th>
-  <th>ظرفیت اعلام شده
-
-</th>
-<th>تعداد تکمیل کنندگان فرم ثبت نام
-
-</th>
-<th>فرایند پرداخت شهریه کامل شده است
-</th>
-<th>ویژه ایثارگران
-</th>
-
-<th>اقساط
-</th>
-</tr>
-</thead>';
-        $result = App\Course::select('*')->get();
+        $pageNumber = $request->input('data');
+        $result = App\Course::select('*')->skip(($pageNumber - 1) * 20)->take(20)->get();
+        $r = [];
+        $r['data'] = [];
         foreach ($result as $t) {
-            $count1 = $this->fromCompletedStatus($t->id, 1);
-            $count2 = $this->fromCompletedRegisterationStatus($t->id, 2, 1);
-            $count3 = $this->formIfInvalid($t->id);
-            $count4 = $this->fromCompletedRegisterationStatus($t->id, 2, 2);
+            array_push($r['data'], [
+                'id'               => $t->id,
+                'title'            => $t->title,
+                'code'             => $t->code,
+                'officialCapacity' => $t->officialCapacity,
+                'decleredCapacity' => $t->decleredCapacity,
+                'count1'           => $this->fromCompletedStatus($t->id, 1),
+                'count2'           => $this->fromCompletedRegisterationStatus($t->id, 2, 1),
+                'count3'           => $this->formIfInvalid($t->id),
+                'count4'           => $this->fromCompletedRegisterationStatus($t->id, 2, 2)
+            ]);
 
-
-            $table .= "
-<tr>
-<td>$t->title </td>
-<td> $t->code </td>
-<td> $t->officialCapacity </td>
-<td> $t->decleredCapacity </td>
-<td> $count1 </td>
-<td>$count2 </td>
-<td> $count3 </td>
-<td> $count4 </td>
-";
         }
-        echo $table . '</table></div>';
+        return response([
+            'result'          => 'success',
+            'draw'            => $pageNumber,
+            'recordsTotal'    => count($result),
+            'recordsFiltered' => count($result),
+            'data'            => $r['data'],
+        ]);
+    }
+
+    public function QueryBuilder($data)
+    {
+        $query = $this->campaign->query();
+
+        $searchKey = $data->search->value;
+        if (!empty($searchKey)) {
+            $query->where('title', 'like', '%' . $searchKey . '%');
+        }
+
+        $total = $query->count();
+
+        if (!empty($data->order)) {
+            $query->orderBy($data->columns[$data->order[0]->column]->data, $data->order[0]->dir);
+        }
+
+        $result = $query
+            ->skip($data->start)
+            ->take($data->length)
+            ->get();
+
+        return [$total, $result];
     }
 
 }

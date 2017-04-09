@@ -73,7 +73,7 @@ Route::group(['middleware' => ['web']], function () {
         'middleware' => 'auth',
         'uses' => 'AdminController@admin6'
     ]);
-    Route::get('admin7', [
+    Route::post('admin7', [
         'middleware' => 'auth',
         'uses' => 'AdminController@admin7'
     ]);
